@@ -1,47 +1,77 @@
 const graphql = require("graphql");
 const axios = require("axios");
-const { GraphQLObjectType, GraphQLString, GraphQLInt, GraphQLSchema } = graphql;
+const {
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLList,
+  GraphQLString,
+  GraphQLInt,
+} = graphql;
 
 const CompanyType = new GraphQLObjectType({
   name: "Company",
-  fields: {
-    id: { type: GraphQLString },
-    name: { type: GraphQLString },
-    description: { type: GraphQLString },
+  fields: () => {
+    return {
+      id: { type: GraphQLString },
+      name: { type: GraphQLString },
+      description: { type: GraphQLString },
+      users: {
+        type: new GraphQLList(UserType),
+        resolve: (parentVal, args) => {
+          console.log(parentVal);
+          return axios
+            .get(`http://localhost:3000/companies/${parentVal.id}/users`)
+            .then((resp) => resp.data);
+        },
+      },
+    };
   },
 });
 
 const PositionType = new GraphQLObjectType({
   name: "Position",
-  fields: {
-    id: { type: GraphQLString },
-    name: { type: GraphQLString },
-    description: { type: GraphQLString },
+  fields: () => {
+    return {
+      id: { type: GraphQLString },
+      name: { type: GraphQLString },
+      description: { type: GraphQLString },
+      users: {
+        type: new GraphQLList(UserType),
+        resolve: (parentVal, args) => {
+          console.log(parentVal);
+          return axios
+            .get(`http://localhost:3000/positions/${parentVal.id}/users`)
+            .then((resp) => resp.data);
+        },
+      },
+    };
   },
 });
 
 const UserType = new GraphQLObjectType({
   name: "User",
-  fields: {
-    id: { type: GraphQLString },
-    firstName: { type: GraphQLString },
-    age: { type: GraphQLInt },
-    company: {
-      type: CompanyType,
-      resolve: (parentVal, args) => {
-        return axios
-          .get(`http://localhost:3000/companies/${parentVal.companyId}`)
-          .then((resp) => resp.data);
+  fields: () => {
+    return {
+      id: { type: GraphQLString },
+      firstName: { type: GraphQLString },
+      age: { type: GraphQLInt },
+      company: {
+        type: CompanyType,
+        resolve: (parentVal, args) => {
+          return axios
+            .get(`http://localhost:3000/companies/${parentVal.companyId}`)
+            .then((resp) => resp.data);
+        },
       },
-    },
-    position: {
-      type: PositionType,
-      resolve: (parentVal, args) => {
-        return axios
-          .get(`http://localhost:3000/positions/${parentVal.positionId}`)
-          .then((resp) => resp.data);
+      position: {
+        type: PositionType,
+        resolve: (parentVal, args) => {
+          return axios
+            .get(`http://localhost:3000/positions/${parentVal.positionId}`)
+            .then((resp) => resp.data);
+        },
       },
-    },
+    };
   },
 });
 
