@@ -1,0 +1,21 @@
+
+====
+Fragments Example:
+{
+  apple:company(id: "1") {
+   ...companyDetailsNeeded
+  }
+  google:company(id: "2") {
+  	...companyDetailsNeeded
+  }
+  
+}
+
+fragment companyDetailsNeeded on Company {
+   id
+    name
+    description
+    users{
+      firstName
+    }
+}
