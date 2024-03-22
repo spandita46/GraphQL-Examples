@@ -125,10 +125,52 @@ const mutation = new GraphQLObjectType({
         companyId: {
           type: GraphQLString,
         },
+        positionId: {
+          type: GraphQLString,
+        },
       },
-      resolve(parentsVal, { firstName, age, companyId }) {
+      resolve(parentsVal, { firstName, age, companyId, positionId }) {
         return axios
           .post("http://localhost:3000/users", { firstName, age })
+          .then((res) => res.data);
+      },
+    },
+    deleteUser: {
+      type: UserType,
+      args: {
+        id: {
+          type: new GraphQLNonNull(GraphQLString),
+        },
+      },
+      resolve(parentValue, { id }) {
+        return axios
+          .delete(`http://localhost:3000/users/${id}`)
+          .then((res) => res.data);
+      },
+    },
+    editUser: {
+      type: UserType,
+      args: {
+        id: {
+          type: new GraphQLNonNull(GraphQLString),
+        },
+        firstName: {
+          type: GraphQLString,
+        },
+        age: {
+          type: GraphQLInt,
+        },
+        companyId: {
+          type: GraphQLString,
+        },
+        positionId: {
+          type: GraphQLString,
+        },
+      },
+      resolve(parentValue, args) {
+        // id wont be updated as json server handles that
+        return axios
+          .patch(`http://localhost:3000/users/${args.id}`, args)
           .then((res) => res.data);
       },
     },
