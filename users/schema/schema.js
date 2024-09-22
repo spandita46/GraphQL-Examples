@@ -131,7 +131,12 @@ const mutation = new GraphQLObjectType({
       },
       resolve(parentsVal, { firstName, age, companyId, positionId }) {
         return axios
-          .post("http://localhost:3000/users", { firstName, age })
+          .post("http://localhost:3000/users", {
+            firstName,
+            age,
+            companyId,
+            positionId,
+          })
           .then((res) => res.data);
       },
     },
